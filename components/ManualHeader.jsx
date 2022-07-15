@@ -2,14 +2,16 @@ import { useMoralis } from 'react-moralis';
 import { useEffect } from 'react';
 
 export default function ManualHeader() {
-  const { enableWeb3, account, isWeb3Enabled, Moralis, deactivateWeb3 } = useMoralis();
+  const { enableWeb3, account, isWeb3Enabled, Moralis, deactivateWeb3, isWeb3EnableLoading } = useMoralis();
   // useEffect(() => {}, [])
   // takes a function as the first argument
   // takes an array of dependencies as the second argument
   // if the array is empty, the function will only run once (anytime something renders)
   // if the array is not empty, the function will run whenever any of the dependencies change
   // NEED TO BE CAREFUL WITH THIS: circular render dependencies will cause an infinite loop
+
   // sample code
+  /*
   useEffect(() => {
     console.log('*** 01 isWeb3Enabled (dependency array):', isWeb3Enabled);
   }, [isWeb3Enabled]); // this will run whenever isWeb3Enabled changes
@@ -19,7 +21,11 @@ export default function ManualHeader() {
   useEffect(() => {
     console.log('*** 03 isWeb3Enabled (no dependency array):', isWeb3Enabled);
   }); // executes every time the component renders
+  */
+
   // actual code
+
+  // handle any wallet connection
   useEffect(() => {
     if (isWeb3Enabled) return; // if isWeb3Enabled is true, we'll be done
     if (typeof window !== 'undefined') {
@@ -29,6 +35,7 @@ export default function ManualHeader() {
     }
   }, [isWeb3Enabled]); // this will run whenever isWeb3Enabled changes
 
+  // handle any wallet change/disconnection
   useEffect(() => {
     Moralis.onAccountChanged((account) => {
       console.log(`Account changed to ${account}`);
@@ -50,10 +57,12 @@ export default function ManualHeader() {
         <button
           onClick={async () => {
             await enableWeb3();
+            // set connected in localStorage, injected means metamask at this point, while we are using a single wallet
             if (typeof window !== 'undefined') {
               window.localStorage.setItem('connected', 'injected');
             }
           }}
+          disabled={isWeb3EnableLoading} // disable connect button if we are loading
         >
           Connect
         </button>
