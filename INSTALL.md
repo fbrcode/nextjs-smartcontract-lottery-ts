@@ -18,3 +18,9 @@ function MyApp({ Component, pageProps }) {
 
 export default MyApp;
 ```
+
+### Wallet connection install
+
+- `yarn add moralis react-moralis`
+
+> Notice that they are not development dependencies.
