@@ -21,6 +21,8 @@ export default function LotteryEntrance() {
   // console.log(`lottery.abi: ${lotteryABI.length}`);
 
   const [lotteryEntranceFee, setLotteryEntranceFee] = useState('0');
+  const [numberOfPlayers, setNumberOfPlayers] = useState('0');
+  const [recentWinner, setRecentWinner] = useState('0');
 
   const dispatch = useNotification();
 
@@ -39,14 +41,33 @@ export default function LotteryEntrance() {
     params: {},
   });
 
+  const { runContractFunction: getNumberOfPlayers } = useWeb3Contract({
+    abi: lotteryABI,
+    contractAddress: lotteryAddress,
+    functionName: 'getNumberOfPlayers',
+    params: {},
+  });
+
+  const { runContractFunction: getRecentWinner } = useWeb3Contract({
+    abi: lotteryABI,
+    contractAddress: lotteryAddress,
+    functionName: 'getRecentWinner',
+    params: {},
+  });
+
+  async function updateUI() {
+    const entranceFeeFromCall = (await getEntranceFee()).toString();
+    const numberOfPlayersFromCall = (await getNumberOfPlayers()).toString();
+    const recentWinnerFromCall = (await getRecentWinner()).toString();
+
+    setLotteryEntranceFee(entranceFeeFromCall); // save as wei value
+    setNumberOfPlayers(numberOfPlayersFromCall);
+    setRecentWinner(recentWinnerFromCall);
+  }
+
   useEffect(() => {
     if (isWeb3Enabled) {
       // try to read the lottery entrance fee from the contract
-      async function updateUI() {
-        const entranceFeeFromContract = (await getEntranceFee()).toString();
-        setLotteryEntranceFee(entranceFeeFromContract); // save as wei value
-        // console.log(`Entrance fee: ${entranceFeeFromContract}`);
-      }
       updateUI();
     }
   }, [isWeb3Enabled]);
@@ -54,12 +75,13 @@ export default function LotteryEntrance() {
   const handleSuccess = async function (tx) {
     await tx.wait(1);
     handleNewNotification(tx);
+    updateUI();
   };
 
   const handleNewNotification = function (tx) {
     dispatch({
       type: 'info',
-      message: `Transaction ${tx.hash} has been sent`,
+      message: `Transaction ${tx.hash.slice(0, 6)}...${tx.hash.slice(tx.hash.length - 4)} confirmed!`,
       title: 'Transaction notification',
       position: 'topR',
       icon: 'bell',
@@ -81,7 +103,9 @@ export default function LotteryEntrance() {
           >
             Enter Raffle
           </button>
-          Lottery Entrance Fee = {ethers.utils.formatUnits(lotteryEntranceFee, 'ether')} ETH
+          Lottery Entrance Fee = {ethers.utils.formatUnits(lotteryEntranceFee, 'ether')} ETH Number of players =
+          {numberOfPlayers}
+          Recent winner = {recentWinner}
         </div>
       ) : (
         <div>
