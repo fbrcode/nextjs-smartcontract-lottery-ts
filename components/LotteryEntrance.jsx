@@ -4,6 +4,7 @@ import { loadDeployedLotteryContract, networkMapping } from '../constants';
 import { useMoralis } from 'react-moralis';
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
+import { useNotification } from 'web3uikit';
 
 export default function LotteryEntrance() {
   const { chainId: chainIdHex, isWeb3Enabled } = useMoralis();
@@ -16,10 +17,12 @@ export default function LotteryEntrance() {
   const lotteryAddress = lottery?.address;
   const lotteryABI = lottery?.abi;
 
-  console.log(`lottery.address: ${lotteryAddress}`);
-  console.log(`lottery.abi: ${lotteryABI.length}`);
+  // console.log(`lottery.address: ${lotteryAddress}`);
+  // console.log(`lottery.abi: ${lotteryABI.length}`);
 
   const [lotteryEntranceFee, setLotteryEntranceFee] = useState('0');
+
+  const dispatch = useNotification();
 
   const { runContractFunction: enterLottery } = useWeb3Contract({
     abi: lotteryABI,
@@ -42,11 +45,26 @@ export default function LotteryEntrance() {
       async function updateUI() {
         const entranceFeeFromContract = (await getEntranceFee()).toString();
         setLotteryEntranceFee(entranceFeeFromContract); // save as wei value
-        console.log(`Entrance fee: ${entranceFeeFromContract}`);
+        // console.log(`Entrance fee: ${entranceFeeFromContract}`);
       }
       updateUI();
     }
   }, [isWeb3Enabled]);
+
+  const handleSuccess = async function (tx) {
+    await tx.wait(1);
+    handleNewNotification(tx);
+  };
+
+  const handleNewNotification = function (tx) {
+    dispatch({
+      type: 'info',
+      message: `Transaction ${tx.hash} has been sent`,
+      title: 'Transaction notification',
+      position: 'topR',
+      icon: 'bell',
+    });
+  };
 
   return (
     <div>
@@ -55,7 +73,10 @@ export default function LotteryEntrance() {
         <div>
           <button
             onClick={async function () {
-              await enterLottery();
+              await enterLottery({
+                onSuccess: handleSuccess,
+                onError: (error) => console.log(error),
+              });
             }}
           >
             Enter Raffle
