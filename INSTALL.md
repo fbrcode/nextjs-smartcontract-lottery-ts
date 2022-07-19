@@ -54,4 +54,8 @@ Commands:
 - `yarn add --dev tailwindcss postcss autoprefixer`
 - `yarn tailwindcss init -p`
 
-Install VS code component: <https://marketplace.visualstudio.com/items?itemName=csstools.postcss>
+Install VS code components:
+
+- PostCSS Language Support: <https://marketplace.visualstudio.com/items?itemName=csstools.postcss>
+
+- Tailwind CSS IntelliSense: <https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss>
