@@ -88,6 +88,8 @@ export default function LotteryEntrance() {
     });
   };
 
+  // NEXT STEP: handle events listening to refresh the UI
+
   return (
     <div>
       Lottery entrance component
