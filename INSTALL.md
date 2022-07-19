@@ -115,3 +115,10 @@ Decentralized Lottery Site: <https://royal-sea-1667.on.fleek.co/>
 Or: <ipfs://QmULUhUEiMhidXGNm8bESFazeku1MMNk3ChNfsjaBcWJoi>
 
 Site management: <https://app.fleek.co/#/sites/royal-sea-1667/overview?accountId=294682a1-1de4-43ff-986c-0644e8cde447>
+
+## Typescript Version
+
+Install the following packages
+
+- `yarn add ethers`
+- `yarn add --dev typescript @types/node @types/react @types/react-dom`
