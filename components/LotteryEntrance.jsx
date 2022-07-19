@@ -73,7 +73,7 @@ export default function LotteryEntrance() {
   }, [isWeb3Enabled]);
 
   const handleSuccess = async function (tx) {
-    await tx.wait(1);
+    await tx.wait(1); // wait for the transaction to be confirmed by 1 block
     handleNewNotification(tx);
     updateUI();
   };
@@ -96,12 +96,12 @@ export default function LotteryEntrance() {
           <button
             onClick={async function () {
               await enterLottery({
-                onSuccess: handleSuccess,
+                onSuccess: handleSuccess, // checks to see if a transaction was sent successfully to MetaMask
                 onError: (error) => console.log(error),
               });
             }}
           >
-            Enter Raffle
+            Enter Lottery
           </button>
           Lottery Entrance Fee = {ethers.utils.formatUnits(lotteryEntranceFee, 'ether')} ETH Number of players =
           {numberOfPlayers}
