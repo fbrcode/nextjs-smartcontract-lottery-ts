@@ -42,3 +42,16 @@ Web3-UI-Kit: <https://web3ui.github.io/web3uikit/?path=/story/5-popup-notificati
 **On nextjs-smartcontract-lottery-ts**:
 
 - Start the app on <http://localhost:3000/> with `yarn dev`
+
+## UI CSS Formatting
+
+Tailwind CSS: <https://tailwindcss.com/>
+
+Install: <https://tailwindcss.com/docs/guides/nextjs>
+
+Commands:
+
+- `yarn add --dev tailwindcss postcss autoprefixer`
+- `yarn tailwindcss init -p`
+
+Install VS code component: <https://marketplace.visualstudio.com/items?itemName=csstools.postcss>
