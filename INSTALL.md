@@ -122,3 +122,5 @@ Install the following packages
 
 - `yarn add ethers`
 - `yarn add --dev typescript @types/node @types/react @types/react-dom`
+
+Generate config with: `yarn tsc --init`
