@@ -1,9 +1,8 @@
-const localLottery = require('./localhost/Lottery.json');
-const localVRF = require('./localhost/VRFCoordinatorV2Mock.json');
+import localLottery from './localhost/Lottery.json';
+import localVRF from './localhost/VRFCoordinatorV2Mock.json';
+import rinkebyLottery from './rinkeby/Lottery.json';
 
-const rinkebyLottery = require('./rinkeby/Lottery.json');
-
-const loadDeployedLotteryContract = (network) => {
+export const loadDeployedLotteryContract = (network: string) => {
   if (network === 'localhost') {
     return localLottery;
   } else if (network === 'rinkeby') {
@@ -12,20 +11,20 @@ const loadDeployedLotteryContract = (network) => {
   return null;
 };
 
-const loadDeployedVRFMockContract = (network) => {
+export const loadDeployedVRFMockContract = (network: string) => {
   if (network === 'localhost') {
     return localVRF;
   }
   return null;
 };
 
-const networkMapping = {
+export const networkMapping: NetworkReference = {
   31337: 'localhost',
   4: 'rinkeby',
 };
 
-module.exports = {
-  loadDeployedLotteryContract,
-  loadDeployedVRFMockContract,
-  networkMapping,
+export type NetworkReference = {
+  [key: number]: NetworkOptions;
 };
+
+export type NetworkOptions = 'localhost' | 'rinkeby' | 'kovan' | 'mainnet' | 'ropsten' | 'polygon';

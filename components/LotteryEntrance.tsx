@@ -3,23 +3,20 @@ import { useWeb3Contract } from 'react-moralis';
 import { loadDeployedLotteryContract, networkMapping } from '../constants';
 import { useMoralis } from 'react-moralis';
 import { useEffect, useState } from 'react';
-import { ethers } from 'ethers';
+import { BigNumber, ethers, ContractTransaction } from 'ethers';
 import { useNotification } from 'web3uikit';
 
+interface contractAddressesInterface {
+  [key: string]: string[];
+}
+
 export default function LotteryEntrance() {
-  const { chainId: chainIdHex, isWeb3Enabled } = useMoralis();
-  const chainId = parseInt(chainIdHex);
+  let { chainId: chainIdHex, isWeb3Enabled } = useMoralis();
+  const chainId = chainIdHex === null ? 0 : parseInt(chainIdHex);
   const networkName = networkMapping[chainId];
-  // console.log(`chain Id Hex: ${chainIdHex}`);
-  // console.log(`chain Id: ${chainId}`);
-  // console.log(`Network name: ${networkName}`);
   const lottery = loadDeployedLotteryContract(networkName);
   const lotteryAddress = lottery?.address;
   const lotteryABI = lottery?.abi;
-
-  // console.log(`lottery.address: ${lotteryAddress}`);
-  // console.log(`lottery.abi: ${lotteryABI.length}`);
-
   const [lotteryEntranceFee, setLotteryEntranceFee] = useState('0');
   const [numberOfPlayers, setNumberOfPlayers] = useState('0');
   const [recentWinner, setRecentWinner] = useState('0');
@@ -60,9 +57,9 @@ export default function LotteryEntrance() {
   });
 
   async function updateUI() {
-    const entranceFeeFromCall = (await getEntranceFee()).toString();
-    const numberOfPlayersFromCall = (await getNumberOfPlayers()).toString();
-    const recentWinnerFromCall = (await getRecentWinner()).toString();
+    const entranceFeeFromCall = ((await getEntranceFee()) as BigNumber).toString();
+    const numberOfPlayersFromCall = ((await getNumberOfPlayers()) as BigNumber).toString();
+    const recentWinnerFromCall = (await getRecentWinner()) as string;
 
     setLotteryEntranceFee(entranceFeeFromCall); // save as wei value
     setNumberOfPlayers(numberOfPlayersFromCall);
@@ -76,13 +73,13 @@ export default function LotteryEntrance() {
     }
   }, [isWeb3Enabled]);
 
-  const handleSuccess = async function (tx) {
+  const handleSuccess = async function (tx: ContractTransaction) {
     await tx.wait(1); // wait for the transaction to be confirmed by 1 block
     handleNewNotification(tx);
     updateUI();
   };
 
-  const handleNewNotification = function (tx) {
+  const handleNewNotification = function (tx: ContractTransaction) {
     dispatch({
       type: 'info',
       message: `Transaction ${tx.hash.slice(0, 6)}...${tx.hash.slice(tx.hash.length - 4)} confirmed!`,
@@ -102,7 +99,7 @@ export default function LotteryEntrance() {
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             onClick={async function () {
               await enterLottery({
-                onSuccess: handleSuccess, // checks to see if a transaction was sent successfully to MetaMask
+                onSuccess: (tx) => handleSuccess(tx as ContractTransaction), // checks to see if a transaction was sent successfully to MetaMask
                 onError: (error) => console.log(error),
               });
             }}
